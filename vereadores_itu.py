@@ -1,14 +1,27 @@
 # -*- coding: utf-8 -*-
 from bs4 import BeautifulSoup
 import requests
+# import psycopg2 #Biblioteca do PostgreSQL
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
 
+total = 0
 def separa_elementos(tag):
+    # #Se conecta ao Banco de dados
+    # try:
+    #     conn = psycopg2.connect("dbname='dbVereador' user='postgres' host='localhost' port=5432 password='vereador'")
+    # except:
+    #     print("I am unable to connect to the database")
+    # cur = conn.cursor()
+    # cur.execute('DELETE FROM "tabela" ') #Deleta toda a tabela existente
+
     aux = 0
+    global total
+    print "Vereador " + str(total+1)
     for elem in tag:
         if aux == 1:
+            total += 1
             nome = str(elem)
             nome = nome.split("<b>")
             nome = str(nome[1])
@@ -16,6 +29,7 @@ def separa_elementos(tag):
             nome = nome.replace("</div>", "")
             nome = nome.replace("\n", "")
             print "Nome: " + str(nome)
+
         if aux == 3:
             partido = str(elem)
             partido = partido.split("</div>")
@@ -33,10 +47,9 @@ def separa_elementos(tag):
                 print "Email: " + str(email)
             print "\n"
         aux+=1
-
-def pega_total(aux):
-    total = aux
-    return total
+        # #Preenche o Banco de Dados
+        # cur.execute('INSERT INTO "tabela" (id, nome, partido, email) '
+        #     'VALUES (%s, %s, %s, %s)', (total, str(nome), str(partido), str(email)))
 
 class CrawlerVereadores:
     def __init__(self, discount_wanted):
