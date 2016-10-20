@@ -20,9 +20,18 @@ def separa_elementos(tag):
             partido = str(elem)
             partido = partido.split("</div>")
             partido = str(partido[0])
-            print "Partido " + str(partido)
+            partido = partido.split(" ")
+            partido = partido[1]
+            print "Partido: " + str(partido)
         if aux == 5:
-            print "Email " + str(elem) + "\n"
+            email = str(elem)
+            email = email.split("<b>")
+            if len(email)>1:
+                email = email[1]
+                email = email.split("</b>")
+                email = email[0]
+                print "Email: " + str(email)
+            print "\n"
         aux+=1
 
 def pega_total(aux):
