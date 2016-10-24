@@ -8,17 +8,27 @@ sys.setdefaultencoding('utf8')
 
 total = 0
 def separa_elementos(tag):
+<<<<<<< HEAD
     conn = ""
+=======
+>>>>>>> f5812ec52d4de6f1a327dbcf97124bbb67f76017
     nomeTag = ""
     partidoTag = ""
     emailTag = ""
 
     #Se conecta ao Banco de dados
     try:
+<<<<<<< HEAD
         conn = psycopg2.connect("dbname='dbvereador' user='postgres' host='localhost' port=5433 password='vereador'")
         cur = conn.cursor()
     except:
         print("I am unable to connect to the database")
+=======
+        conn = psycopg2.connect("dbname='dbvereador' user='postgres' host='localhost' port=5432 password='vereador'")
+    except:
+        print("I am unable to connect to the database")
+    cur = conn.cursor()
+>>>>>>> f5812ec52d4de6f1a327dbcf97124bbb67f76017
     # cur.execute('DELETE FROM "tabela" ') #Deleta toda a tabela existente
 
     aux = 0
@@ -55,6 +65,7 @@ def separa_elementos(tag):
                 print "Email: " + str(emailTag)
 
             # Preenche o Banco de Dados
+<<<<<<< HEAD
             try:
                 cur.execute('INSERT INTO "tabela" (nome, partido, email, id) '
                             'VALUES (%s, %s, %s, %s)', (nomeTag, str(partidoTag), str(emailTag), total))
@@ -63,6 +74,13 @@ def separa_elementos(tag):
                 print "\n"
             except:
                 print "faio"
+=======
+            cur.execute('INSERT INTO "tabela" (nome, partido, email, id) '
+                        'VALUES (%s, %s, %s, %s)', (nomeTag, str(partidoTag), str(emailTag), total))
+            print "Inserindo: " + str(total) + str(nomeTag) + str(partidoTag) + str(emailTag)
+            print "\n"
+            conn.commit()
+>>>>>>> f5812ec52d4de6f1a327dbcf97124bbb67f76017
         aux+=1
 
 class CrawlerVereadores:
@@ -79,6 +97,7 @@ class CrawlerVereadores:
     # Se conecta ao Banco de dados
     try:
         conn = psycopg2.connect(
+<<<<<<< HEAD
             "dbname='dbvereador' user='postgres' host='localhost' port=5433 password='vereador'")
         cur = conn.cursor()
         cur.execute('DELETE FROM "tabela" ') #Deleta toda a tabela existente
@@ -86,6 +105,14 @@ class CrawlerVereadores:
         print "Tabela deletada"
     except:
         print("I am unable to delete to the database")
+=======
+            "dbname='dbvereador' user='postgres' host='localhost' port=5432 password='vereador'")
+    except:
+        print("I am unable to connect to the database")
+    cur = conn.cursor()
+    cur.execute('DELETE FROM "tabela" ') #Deleta toda a tabela existente
+    conn.commit()
+>>>>>>> f5812ec52d4de6f1a327dbcf97124bbb67f76017
 
     def begin_crawl(self):
         for page in self.pages_to_crawl:
