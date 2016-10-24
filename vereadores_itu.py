@@ -1,19 +1,23 @@
 # -*- coding: utf-8 -*-
 from bs4 import BeautifulSoup
 import requests
-# import psycopg2 #Biblioteca do PostgreSQL
+import psycopg2 #Biblioteca do PostgreSQL
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
 
 total = 0
 def separa_elementos(tag):
-    # #Se conecta ao Banco de dados
-    # try:
-    #     conn = psycopg2.connect("dbname='dbVereador' user='postgres' host='localhost' port=5432 password='vereador'")
-    # except:
-    #     print("I am unable to connect to the database")
-    # cur = conn.cursor()
+    nomeTag = ""
+    partidoTag = ""
+    emailTag = ""
+
+    #Se conecta ao Banco de dados
+    try:
+        conn = psycopg2.connect("dbname='dbvereador' user='postgres' host='localhost' port=5432 password='vereador'")
+    except:
+        print("I am unable to connect to the database")
+    cur = conn.cursor()
     # cur.execute('DELETE FROM "tabela" ') #Deleta toda a tabela existente
 
     aux = 0
@@ -28,7 +32,8 @@ def separa_elementos(tag):
             nome = nome.replace("</b>", "")
             nome = nome.replace("</div>", "")
             nome = nome.replace("\n", "")
-            print "Nome: " + str(nome)
+            nomeTag = nome
+            print "Nome: " + str(nomeTag)
 
         if aux == 3:
             partido = str(elem)
@@ -36,7 +41,8 @@ def separa_elementos(tag):
             partido = str(partido[0])
             partido = partido.split(" ")
             partido = partido[1]
-            print "Partido: " + str(partido)
+            partidoTag = partido
+            print "Partido: " + str(partidoTag)
         if aux == 5:
             email = str(elem)
             email = email.split("<b>")
@@ -44,12 +50,16 @@ def separa_elementos(tag):
                 email = email[1]
                 email = email.split("</b>")
                 email = email[0]
-                print "Email: " + str(email)
+                emailTag = email
+                print "Email: " + str(emailTag)
+
+            # Preenche o Banco de Dados
+            cur.execute('INSERT INTO "tabela" (nome, partido, email, id) '
+                        'VALUES (%s, %s, %s, %s)', (nomeTag, str(partidoTag), str(emailTag), total))
+            print "Inserindo: " + str(total) + str(nomeTag) + str(partidoTag) + str(emailTag)
             print "\n"
+            conn.commit()
         aux+=1
-        # #Preenche o Banco de Dados
-        # cur.execute('INSERT INTO "tabela" (id, nome, partido, email) '
-        #     'VALUES (%s, %s, %s, %s)', (total, str(nome), str(partido), str(email)))
 
 class CrawlerVereadores:
     def __init__(self, discount_wanted):
@@ -60,6 +70,16 @@ class CrawlerVereadores:
         self.pages_to_crawl = [
             ('http://consulta.siscam.com.br/camaraitu/vereadores', 'vereadores')
         ]
+
+    # Se conecta ao Banco de dados
+    try:
+        conn = psycopg2.connect(
+            "dbname='dbvereador' user='postgres' host='localhost' port=5432 password='vereador'")
+    except:
+        print("I am unable to connect to the database")
+    cur = conn.cursor()
+    cur.execute('DELETE FROM "tabela" ') #Deleta toda a tabela existente
+    conn.commit()
 
     def begin_crawl(self):
         for page in self.pages_to_crawl:
