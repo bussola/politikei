@@ -8,7 +8,6 @@ sys.setdefaultencoding('utf8')
 
 total = 0
 def separa_elementos(tag):
-    conn = ""
     nomeTag = ""
     partidoTag = ""
     emailTag = ""
@@ -60,8 +59,10 @@ def separa_elementos(tag):
                 conn.commit()
                 print "Inserindo: " + str(total) + str(nomeTag) + str(partidoTag) + str(emailTag)
                 print "\n"
-            except:
-                print "faio"
+            except psycopg2.Error as e:
+                print "Unable to connect!"
+                print e.pgerror
+                print e.diag.message_detail
         aux+=1
 
 class CrawlerVereadores:
